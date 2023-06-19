@@ -1,0 +1,56 @@
+como passar em json PRODUTO
+
+{
+  "codigo": 1,
+  "nome": "Ração para Cães",
+  "imagem": "https://example.com/imagens/racao-caes.jpg",
+  "descricao": "Ração balanceada para cães de todas as idades e portes.",
+  "preco": 49.99,
+  "categoria": {
+    "codigo": 4,
+    "nome": "Alimentos",
+    "descricao": "Categoria de produtos relacionados a alimentos para pets."
+  },
+  "animal": "Cachorro",
+  "comentarios": [
+    {
+      "texto": "Ótima ração, meu cão adorou!",
+      "nota": 5
+    },
+    {
+      "texto": "Entrega rápida e produto de qualidade.",
+      "nota": 4
+    }
+  ]
+}
+
+
+-------------------------------------------------------------
+
+como passar em json CATEGORIA
+
+{
+  "codigo": 4,
+  "nome": "Alimentos",
+  "descricao": "Categoria de produtos relacionados a alimentos para pets."
+}
+
+
+
+-----------------------------------------------------
+
+como passar em json CLIENTE
+{
+  "nome": "Maria Souza Santos",
+  "email": "maria@example.com",
+  "senha": "senha456",
+  "telefone": "9876543210",
+  "endereco": "Avenida Secundária, 456",
+  "CPF": 98765432100,
+  "cartaoCredito": {
+    "numero": "5555666677778888",
+    "titular": "Maria Souza",
+    "validade": "09/23",
+    "codigoSeguranca": "789"
+  }
+}
