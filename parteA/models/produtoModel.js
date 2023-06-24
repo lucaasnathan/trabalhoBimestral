@@ -10,10 +10,6 @@ const produtoSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  imagem: {
-    type: String,
-    required: true
-  },
   descricao: String,
   preco: {
     type: Number,
@@ -39,6 +35,9 @@ const produtoSchema = new mongoose.Schema({
   notaGeral: {
     type: Number,
     default: 0
+  },
+  imagem: {
+    type: Buffer
   }
 });
 

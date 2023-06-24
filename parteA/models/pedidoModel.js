@@ -37,7 +37,8 @@ const pedidoSchema = new mongoose.Schema({
   },
   quantidadeTotal: {
     type: Number,
-    default: 0
+    default: 0,
+    required: false
   }
 });
 

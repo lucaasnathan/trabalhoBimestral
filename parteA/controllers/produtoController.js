@@ -4,25 +4,35 @@ const Produto = require('../models/produtoModel');
 
 class ProdutoController {
   async cadastrar(req, res) {
-    const max = await produtoModel.findOne({}).sort({ codigo: -1 });
-    const produto = req.body;
-    produto.codigo = max == null ? 1 : max.codigo + 1;
+    try {
+      const produto = req.body;
+      const file = req.file.buffer;
+      produto.imagem = file;
+      const max = await produtoModel.findOne({}).sort({ codigo: -1 });
+      produto.codigo = max == null ? 1 : max.codigo + 1;
 
-    const categoria = await categoriaModel.findOne({ codigo: produto.categoria.codigo });
-    produto.categoria = categoria._id;
+      const categoria = await categoriaModel.findOne({ codigo: produto.categoria.codigo });
+      if (!categoria) {
+        return res.status(404).json({ message: 'Categoria não encontrada' });
+      }
+      produto.categoria = categoria._id;
 
-    const resultado = await produtoModel.create(produto);
+      const resultado = await produtoModel.create(produto);
 
-    // Calcular a média das notas dos comentários
-    if (produto.comentarios && produto.comentarios.length > 0) {
-      const notas = produto.comentarios.map(comentario => comentario.nota);
-      const notaGeral = notas.reduce((total, nota) => total + nota, 0) / notas.length;
-      resultado.notaGeral = parseFloat(notaGeral.toFixed(2));
-      await resultado.save();
+      // Calcular a média das notas dos comentários
+      if (produto.comentarios && produto.comentarios.length > 0) {
+        const notas = produto.comentarios.map(comentario => parseFloat(comentario.nota));
+        const notaGeral = notas.reduce((total, nota) => total + nota, 0) / notas.length;
+        resultado.notaGeral = parseFloat(notaGeral.toFixed(2));
+        await resultado.save();
+      }
+
+      res.status(201).json(resultado);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao cadastrar o produto' });
     }
-
-    res.status(201).json(resultado);
   }
+
 
   async listar(req, res) {
     try {
@@ -53,12 +63,21 @@ class ProdutoController {
 
     try {
       const categoria = await categoriaModel.findOne({ codigo: novosDados.categoria.codigo });
+      if (!categoria) {
+        return res.status(404).json({ message: 'Categoria não encontrada' });
+      }
       novosDados.categoria = categoria._id;
 
-      const resultado = await Produto.findOneAndUpdate({ codigo: codigo }, novosDados, { new: true });
-      if (!resultado) {
-        return res.status(404).json({ message: 'Produto não encontrado' });
-      }
+      const resultado = await Produto.findOneAndUpdate(
+        { codigo: codigo },
+        {
+          $set: {
+            ...novosDados,
+            imagem: req.file ? req.file.buffer : resultado.imagem
+          }
+        },
+        { new: true }
+      );
 
       // Recalcular a média das notas dos comentários
       if (resultado.comentarios && resultado.comentarios.length > 0) {
@@ -73,6 +92,8 @@ class ProdutoController {
       return res.status(500).json({ error: 'Erro ao atualizar o produto' });
     }
   }
+
+
 
 
 

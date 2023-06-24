@@ -4,35 +4,34 @@ const bcryptjs = require('bcryptjs');
 const clienteSchema = new mongoose.Schema({
   codigo: Number,
   nome: {
-      type: String,
-      require: true
+    type: String,
+    require: true
   },
   email: {
-      type: String,
-      unique: true,
-      required: true,
-      lowercase: true
+    type: String,
+    unique: true,
+    required: true,
+    lowercase: true
   },
   senha: {
-      type: String,
-      required: true,
-      select: false
-  },
-  dtaCriacao: {
-      type: Date,
-      default: Date.now
-  },
-  token: {
-      type: String,
-      select: false
-  },
-  telefone: {
     type: String,
     required: true,
     select: false
-  }, 
-  endereco:{
-    type: String, 
+  },
+  telefone: {
+    type: String,
+    required: true
+  },
+  dtaCriacao: {
+    type: Date,
+    default: Date.now
+  },
+  token: {
+    type: String,
+    select: false
+  },
+  endereco: {
+    type: String,
     required: true
   },
   CPF: {
@@ -44,14 +43,26 @@ const clienteSchema = new mongoose.Schema({
     titular: String,
     validade: String,
     codigoSeguranca: String
+  },
+  avatar: {
+    type: Buffer
   }
 
 });
 
 clienteSchema.pre('save', async function (next) {
-  const hash = await bcryptjs.hash(this.senha, 10);
-  this.senha = hash;
-  next();
+  if (!this.isModified('senha')) {
+    return next();
+  }
+
+  try {
+    const hash = await bcryptjs.hash(this.senha, 10);
+    this.senha = hash;
+    next();
+  } catch (error) {
+    return next(error);
+  }
 });
+
 
 module.exports = mongoose.model('cliente', clienteSchema)

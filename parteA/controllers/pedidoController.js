@@ -91,6 +91,4 @@ async listarTodosPedidos(req, res) {
   
 }
 
-
-
 module.exports = new PedidoController();
